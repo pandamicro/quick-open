@@ -4,7 +4,7 @@ var Path = require('fire-path');
 var Fs = require('fire-fs');
 var Globby = require("globby");
 
-var ASSETS_PATH = '/assets/';
+var _assetsPath = '';
 
 Editor.registerPanel( 'quick-open.panel', {
     listeners: {
@@ -20,28 +20,24 @@ Editor.registerPanel( 'quick-open.panel', {
 
     ready: function () {
         var search = this.$.search, searchElem, self = this;
-        search.setFocus();
         // A trick to make input field auto focused
         setTimeout(function () {
             search.$.input.select();
         }, 1);
-
-        // A trick to make sure text field for search will respond to _onKeyDown immidiately 
-        // (Enter can't be handled if there is no explicit event listener)
-        searchElem = search.getElementsByTagName("INPUT")[0];
-        searchElem.addEventListener("keydown", function (event) {
-            self._onKeyDown(event);
-        });
         
         this.searchText = '';
+        Editor.assetdb.queryPathByUrl('assets://', function (url) {
+            if (url) {
+                _assetsPath = url + "/";
+            }
+        });
     },
 
     search: function (name) {
         var files = [], file, paths, path, i;
-        var projectPath = Editor.projectInfo.path + ASSETS_PATH;
 
-        if (name != '') {
-            paths = Globby.sync( projectPath + '**/' + name + '*', {nocase: true} );
+        if (_assetsPath !== '' && name !== '') {
+            paths = Globby.sync( _assetsPath + '**/' + name + '*', {nocase: true} );
 
             for (i = 0; i < paths.length; i++) {
                 path = paths[i];
@@ -51,7 +47,7 @@ Editor.registerPanel( 'quick-open.panel', {
                 }
 
                 file = {
-                    path: path.substr(projectPath.length),
+                    path: path.substr(_assetsPath.length),
                     count: i,
                     selected: (i == 0 ? true : false)
                 }
@@ -69,7 +65,7 @@ Editor.registerPanel( 'quick-open.panel', {
             event.preventDefault();
 
             var filesElems = this.$.files;
-            var items = filesElems.getElementsByTagName('SEARCH-FILE-ITEM');
+            var items = filesElems.getElementsByTagName('QUICK-OPEN-FILE-ITEM');
             var lastSelected = null;
             for (var i = items.length - 1; i >= 0; i--) {
                 current = items[i];
@@ -90,7 +86,7 @@ Editor.registerPanel( 'quick-open.panel', {
             event.preventDefault();
 
             var filesElems = this.$.files;
-            var items = filesElems.getElementsByTagName('SEARCH-FILE-ITEM');
+            var items = filesElems.getElementsByTagName('QUICK-OPEN-FILE-ITEM');
             var lastSelected = null;
             var current = null;
             for (var i = 0; i < items.length; i++) {
@@ -111,17 +107,20 @@ Editor.registerPanel( 'quick-open.panel', {
             event.stopPropagation();
             event.preventDefault();
 
-            var filesElems = this.$.files;
-            var item = filesElems.getElementsByClassName('selected')[0];
-            if (item) {
-                this.openFile(item.parentElement.path);
-            }
+            this._onConfirm();
+        }
+    },
+
+    _onConfirm: function () {
+        var filesElems = this.$.files;
+        var item = filesElems.getElementsByClassName('selected')[0];
+        if (item) {
+            this.openFile(item.parentElement.path);
         }
     },
 
     openFile: function (path) {
-        var projectPath = Editor.projectInfo.path;
-        var url = projectPath + ASSETS_PATH + path;
+        var url = _assetsPath + path;
 
         // Get uuid
         Fs.readFile(url + '.meta', function (err, data) {

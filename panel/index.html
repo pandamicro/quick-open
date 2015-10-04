@@ -5,16 +5,16 @@
     <link rel="import" type="css" href="index.css">
 
     <template>
-        <editor-input id="search" class="big input" placeholder="Type file name here" input-value="{{searchText}}"></editor-input>
+        <editor-input id="search" class="big input" placeholder="Type file name here" input-value="{{searchText}}" on-confirm="_onConfirm"></editor-input>
 
         <ul id="files" class="file-list">
             <template is="dom-repeat" items="{{search(searchText)}}">
-                <search-file-item
+                <quick-open-file-item
                     path="[[item.path]]"
                     count="[[item.count]]"
                     selected="[[item.selected]]"
                 >
-                </search-file-item>
+                </quick-open-file-item>
             </template>
         </ul>
     </template>
