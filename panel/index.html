@@ -1,0 +1,23 @@
+<link rel="import" href="packages://ui-kit/widget/input/input.html">
+<link rel="import" href="item.html">
+
+<dom-module id="editor-quick-open">
+    <link rel="import" type="css" href="index.css">
+
+    <template>
+        <editor-input id="search" class="big input" placeholder="Type file name here" input-value="{{searchText}}"></editor-input>
+
+        <ul id="files" class="file-list">
+            <template is="dom-repeat" items="{{search(searchText)}}">
+                <search-file-item
+                    path="[[item.path]]"
+                    count="[[item.count]]"
+                    selected="[[item.selected]]"
+                >
+                </search-file-item>
+            </template>
+        </ul>
+    </template>
+
+    <script type="text/javascript" src="index.js"></script>
+</dom-module>

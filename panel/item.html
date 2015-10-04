@@ -1,0 +1,37 @@
+<dom-module id="search-file-item">
+    <link rel="import" type="css" href="item.css">
+
+    <template>
+        <li class$="{{_itemClass(selected)}}">{{path}}</li>
+    </template>
+
+    <script type="text/javascript">
+        Editor.registerElement({
+            properties: {
+                path: {
+                    type: String,
+                    value: ''
+                },
+
+                count: {
+                    type: Number,
+                    value: 0
+                },
+
+                selected: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            _itemClass: function(selected) {
+                if (selected) {
+                    return "item selected";
+                }
+                else {
+                    return "item";
+                }
+            }
+        });
+    </script>
+</dom-module>

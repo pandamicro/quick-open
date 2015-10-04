@@ -1,0 +1,28 @@
+:host {
+    display: block;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+
+    list-style-type: none;
+    margin: 10px 0 0 5px;
+    overflow-x: hidden;
+    font-size: 14px;
+    font-weight: bold;
+    color: #999;
+}
+
+.desc {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    overflow: hidden;
+}
+
+.selected {
+    background-color: #007acc;
+    color: #fff;
+}
+
