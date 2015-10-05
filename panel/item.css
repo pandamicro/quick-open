@@ -21,7 +21,7 @@
     overflow: hidden;
 }
 
-.selected {
+:host[selected] > .item {
     background-color: #007acc;
     color: #fff;
 }

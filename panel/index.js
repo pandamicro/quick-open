@@ -37,17 +37,17 @@ Editor.registerPanel( 'quick-open.panel', {
         var files = [], file, paths, path, i;
 
         if (_assetsPath !== '' && name !== '') {
-            paths = Globby.sync( _assetsPath + '**/' + name + '*', {nocase: true} );
+            paths = Globby.sync( Path.join( _assetsPath, '**', name+'*' ), {nocase: true} );
 
             for (i = 0; i < paths.length; i++) {
-                path = paths[i];
+                path = Path.resolve(paths[i]);
                 // Filte meta files
                 if (Path.extname(path).toUpperCase() === '.META') {
                     continue;
                 }
 
                 file = {
-                    path: path.substr(_assetsPath.length),
+                    path: Path.relative( _assetsPath, path ),
                     count: i,
                     selected: (i == 0 ? true : false)
                 }
@@ -113,9 +113,12 @@ Editor.registerPanel( 'quick-open.panel', {
 
     _onConfirm: function () {
         var filesElems = this.$.files;
-        var item = filesElems.getElementsByClassName('selected')[0];
-        if (item) {
-            this.openFile(item.parentElement.path);
+        var items = filesElems.children, i, item;
+        for (i = 0; i < items.length; i++) {
+            item = items[i];
+            if (item.selected) {
+                this.openFile(item.path);
+            }
         }
     },
 
@@ -128,30 +131,30 @@ Editor.registerPanel( 'quick-open.panel', {
             var meta = null;
             if (err) {
                 Editor.error('Failed to read meta file of', path);
+                return;
             }
-            else {
-                try {
-                    meta = JSON.parse(data);
-                    uuid = meta.uuid;
-                }
-                catch (e) {
-                }
-                if (!uuid) {
-                    Editor.error('Failed to parse meta file of', path);
-                }
-                else {
-                    // Open file
-                    Editor.assetdb.queryInfoByUuid( uuid, function ( info ) {
-                        var assetType = info.type;
-                        if ( assetType === 'javascript' || assetType === 'coffeescript' ) {
-                            Editor.sendToCore('code-editor:open-by-uuid', uuid);
-                        }
-                        else if ( assetType === 'scene' ) {
-                            Editor.sendToCore('scene:open-by-uuid', uuid);
-                        }
-                    });
-                }
+
+            try {
+                meta = JSON.parse(data);
+                uuid = meta.uuid;
             }
+            catch (e) {
+            }
+            if (!uuid) {
+                Editor.error('Failed to parse meta file of', path);
+                return;
+            }
+
+            // Open file
+            Editor.assetdb.queryInfoByUuid( uuid, function ( info ) {
+                var assetType = info.type;
+                if ( assetType === 'javascript' || assetType === 'coffeescript' ) {
+                    Editor.sendToCore('code-editor:open-by-uuid', uuid);
+                }
+                else if ( assetType === 'scene' ) {
+                    Editor.sendToCore('scene:open-by-uuid', uuid);
+                }
+            });
         });
     }
 });
