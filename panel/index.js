@@ -64,43 +64,30 @@ Editor.registerPanel( 'quick-open.panel', {
             event.stopPropagation();
             event.preventDefault();
 
-            var filesElems = this.$.files;
-            var items = filesElems.getElementsByTagName('QUICK-OPEN-FILE-ITEM');
-            var lastSelected = null;
-            for (var i = items.length - 1; i >= 0; i--) {
-                current = items[i];
-                if (lastSelected) {
-                    lastSelected.selected = false;
-                    current.selected = true;
-                    filesElems.scrollTop = current.offsetTop;
-                    return;
-                }
-                if (current.selected) {
-                    lastSelected = current;
-                }
-            };
+            var selected = this.$.filesList.querySelector("[selected]");
+            var nextSelect = selected.previousElementSibling;
+            // Valid next selected item (the one on top of the current one)
+            if (nextSelect && nextSelect.selected !== undefined) {
+                selected.selected = false;
+                nextSelect.selected = true;
+                this.$.filesList.scrollTop = nextSelect.offsetTop;
+                return;
+            }
         }
         // down-arrow
         else if ( event.keyCode === 40 ) {
             event.stopPropagation();
             event.preventDefault();
 
-            var filesElems = this.$.files;
-            var items = filesElems.getElementsByTagName('QUICK-OPEN-FILE-ITEM');
-            var lastSelected = null;
-            var current = null;
-            for (var i = 0; i < items.length; i++) {
-                current = items[i];
-                if (lastSelected) {
-                    lastSelected.selected = false;
-                    current.selected = true;
-                    filesElems.scrollTop = current.offsetTop;
-                    return;
-                }
-                if (current.selected) {
-                    lastSelected = current;
-                }
-            };
+            var selected = this.$.filesList.querySelector("[selected]");
+            var nextSelect = selected.nextElementSibling;
+            // Valid next selected item (the one on top of the current one)
+            if (nextSelect && nextSelect.selected !== undefined) {
+                selected.selected = false;
+                nextSelect.selected = true;
+                this.$.filesList.scrollTop = nextSelect.offsetTop;
+                return;
+            }
         }
         // enter
         else if ( event.keyCode === 13 ) {
@@ -112,12 +99,13 @@ Editor.registerPanel( 'quick-open.panel', {
     },
 
     _onConfirm: function () {
-        var filesElems = this.$.files;
+        var filesElems = this.$.filesList;
         var items = filesElems.children, i, item;
         for (i = 0; i < items.length; i++) {
             item = items[i];
             if (item.selected) {
                 this.openFile(item.path);
+                break;
             }
         }
     },

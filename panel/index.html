@@ -7,8 +7,8 @@
     <template>
         <editor-input id="search" class="big input" placeholder="Type file name here" input-value="{{searchText}}" on-confirm="_onConfirm"></editor-input>
 
-        <ul id="files" class="file-list">
-            <template is="dom-repeat" items="{{search(searchText)}}">
+        <ul id="filesList" class="file-list">
+            <template is="dom-repeat" id="files" items="{{search(searchText)}}">
                 <quick-open-file-item
                     path="[[item.path]]"
                     count="[[item.count]]"
