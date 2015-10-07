@@ -2,26 +2,25 @@
     <link rel="import" type="css" href="item.css">
 
     <template>
-        <li class="item">{{path}}</li>
+        <li class="item" selected$="{{item.selected}}">{{item.path}}</li>
     </template>
 
     <script type="text/javascript">
         Editor.registerElement({
             properties: {
-                path: {
-                    type: String,
-                    value: ''
-                },
+                item: {
+                    type: Object,
+                    value: null
+                }
+            },
 
-                count: {
-                    type: Number,
-                    value: 0
-                },
+            observers: [
+                'selectedChanged(item.selected)'
+            ],
 
-                selected: {
-                    type: Boolean,
-                    value: false,
-                    reflectToAttribute: true
+            selectedChanged: function (selected) {
+                if (selected && this.domHost) {
+                    this.parentElement.scrollTop = this.offsetTop;
                 }
             }
         });

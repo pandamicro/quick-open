@@ -15,6 +15,12 @@ Editor.registerPanel( 'quick-open.panel', {
         searchText: {
             type: String,
             value: ''
+        },
+        fileItems: {
+            type: Array,
+            value: function () {
+                return [];
+            }
         }
     },
 
@@ -25,21 +31,23 @@ Editor.registerPanel( 'quick-open.panel', {
             search.$.input.select();
         }, 1);
         
-        this.searchText = '';
         Editor.assetdb.queryPathByUrl('assets://', function (url) {
             if (url) {
                 _assetsPath = url + "/";
             }
         });
+
+        this.searchText = '';
     },
 
-    search: function (name) {
-        var files = [], file, paths, path, i;
+    search: function (event) {
+        var name = event.target.inputValue;
+        var files = [], file, paths, path, i, count;
 
         if (_assetsPath !== '' && name !== '') {
             paths = Globby.sync( Path.join( _assetsPath, '**', name+'*' ), {nocase: true} );
 
-            for (i = 0; i < paths.length; i++) {
+            for (i = 0, count = 0; i < paths.length; i++) {
                 path = Path.resolve(paths[i]);
                 // Filte meta files
                 if (Path.extname(path).toUpperCase() === '.META') {
@@ -48,14 +56,15 @@ Editor.registerPanel( 'quick-open.panel', {
 
                 file = {
                     path: Path.relative( _assetsPath, path ),
-                    count: i,
+                    count: count,
                     selected: (i == 0 ? true : false)
                 }
                 files.push(file);
+                count++;
             }
         }
 
-        return files;
+        this.set("fileItems", files);
     },
 
     _onKeyDown: function ( event ) {
@@ -64,14 +73,22 @@ Editor.registerPanel( 'quick-open.panel', {
             event.stopPropagation();
             event.preventDefault();
 
-            var selected = this.$.filesList.querySelector("[selected]");
-            var nextSelect = selected.previousElementSibling;
-            // Valid next selected item (the one on top of the current one)
-            if (nextSelect && nextSelect.selected !== undefined) {
-                selected.selected = false;
-                nextSelect.selected = true;
-                this.$.filesList.scrollTop = nextSelect.offsetTop;
-                return;
+            var files = this.$.files,
+                filesDom = this.$.filesList.children,
+                items = files.items, i, selected = -1, 
+                previous, current;
+            // Search from bottom to top
+            for (i = items.length - 1; i >= 0; i--) {
+                if (selected >= 0) {
+                    previous = files.modelForElement(filesDom[selected]);
+                    current = files.modelForElement(filesDom[i]);
+                    previous.set("item.selected", false);
+                    current.set("item.selected", true);
+                    return;
+                }
+                if (items[i].selected) {
+                    selected = i;
+                }
             }
         }
         // down-arrow
@@ -79,14 +96,22 @@ Editor.registerPanel( 'quick-open.panel', {
             event.stopPropagation();
             event.preventDefault();
 
-            var selected = this.$.filesList.querySelector("[selected]");
-            var nextSelect = selected.nextElementSibling;
-            // Valid next selected item (the one on top of the current one)
-            if (nextSelect && nextSelect.selected !== undefined) {
-                selected.selected = false;
-                nextSelect.selected = true;
-                this.$.filesList.scrollTop = nextSelect.offsetTop;
-                return;
+            var files = this.$.files,
+                filesDom = this.$.filesList.children,
+                items = files.items, i, selected = -1, 
+                previous, current;
+            // Search from top to bottom
+            for (i = 0; i < items.length; i++) {
+                if (selected >= 0) {
+                    previous = files.modelForElement(filesDom[selected]);
+                    current = files.modelForElement(filesDom[i]);
+                    previous.set("item.selected", false);
+                    current.set("item.selected", true);
+                    return;
+                }
+                if (items[i].selected) {
+                    selected = i;
+                }
             }
         }
         // enter
@@ -99,13 +124,14 @@ Editor.registerPanel( 'quick-open.panel', {
     },
 
     _onConfirm: function () {
-        var filesElems = this.$.filesList;
-        var items = filesElems.children, i, item;
+        var items = this.$.files.items, i, fileModel;
+        if (!items) 
+            return;
+
         for (i = 0; i < items.length; i++) {
-            item = items[i];
-            if (item.selected) {
-                this.openFile(item.path);
-                break;
+            if (items[i].selected) {
+                this.openFile(items[i].path);
+                return;
             }
         }
     },

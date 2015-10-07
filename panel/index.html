@@ -5,14 +5,12 @@
     <link rel="import" type="css" href="index.css">
 
     <template>
-        <editor-input id="search" class="big input" placeholder="Type file name here" input-value="{{searchText}}" on-confirm="_onConfirm"></editor-input>
+        <editor-input id="search" class="big input" placeholder="Type file name here" input-value="{{searchText}}" on-input-value-changed="search" on-confirm="_onConfirm"></editor-input>
 
         <ul id="filesList" class="file-list">
-            <template is="dom-repeat" id="files" items="{{search(searchText)}}">
+            <template is="dom-repeat" id="files" items="{{fileItems}}">
                 <quick-open-file-item
-                    path="[[item.path]]"
-                    count="[[item.count]]"
-                    selected="[[item.selected]]"
+                    item={{item}}
                 >
                 </quick-open-file-item>
             </template>
