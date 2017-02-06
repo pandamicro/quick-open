@@ -53,6 +53,7 @@ var createVue = function (elem) {
                             previous.selected = false;
                             current.selected = true;
                             this.selected = current.path;
+                            this.$els.fileslist.scrollTop = this.$els.fileslist.children[i].offsetTop;
                             return;
                         }
                         if (items[i].selected) {
@@ -71,6 +72,7 @@ var createVue = function (elem) {
                             previous.selected = false;
                             current.selected = true;
                             this.selected = current.path;
+                            this.$els.fileslist.scrollTop = this.$els.fileslist.children[i].offsetTop;
                             return;
                         }
                         if (items[i].selected) {
