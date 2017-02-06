@@ -5,7 +5,7 @@
   "author": "pandamicro",
   "main": "main.js",
   "main-menu": {
-    "File/Quick Open": {
+    "i18n:MAIN_MENU.file.title/Quick Open": {
       "message": "quick-open:open",
       "accelerator": "CmdOrCtrl+Shift+O"
     }
