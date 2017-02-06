@@ -1,26 +1,20 @@
 {
   "name": "quick-open",
-  "version": "0.1.0",
-  "description": "Fireball builtin quick open tool",
-  "author": "cocos2d-x.org",
+  "version": "0.2.0",
+  "description": "Quick open file tool",
+  "author": "pandamicro",
   "main": "main.js",
-  "hosts": {
-    "editor-framework": "^0.3.15"
-  },
-  "menus": {
+  "main-menu": {
     "File/Quick Open": {
-      "message": "file:quick-open",
+      "message": "quick-open:open",
       "accelerator": "CmdOrCtrl+Shift+O"
     }
   },
-  "panels": {
-    "panel": {
-      "frame": "panel/index.html",
-      "type": "quick",
-      "title": "Quick Open",
-      "width": 400,
-      "height": 300,
-      "messages": []
-    }
+  "panel": {
+    "main": "panel/index.js",
+    "type": "dockable",
+    "title": "Quick Open",
+    "width": 400,
+    "height": 300
   }
 }

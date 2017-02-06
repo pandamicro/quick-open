@@ -1,3 +1,7 @@
+:host {
+    display: block;
+}
+
 .input {
     left: 10%;
     width: 80%;
@@ -12,11 +16,35 @@
     width: 80%;
     left: 10%;
     bottom: 0px;
-    height: 170px;
+    height: 250px;
     border: 1px solid #777;
     overflow: scroll;
 
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+
+    list-style-type: none;
+    margin: 10px 0 0 5px;
+    overflow-x: hidden;
+    font-size: 14px;
+    font-weight: bold;
+    color: #999;
+}
+
+.item[selected] {
+    background-color: #007acc;
+    color: #fff;
+}
+
+.desc {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    overflow: hidden;
 }

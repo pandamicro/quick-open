@@ -1,21 +1,12 @@
-<link rel="import" href="packages://ui-kit/widget/input/input.html">
-<link rel="import" href="item.html">
+<div v-on:keyup.down="_onKeyUp" v-on:keyup.up="_onKeyUp" v-on:keyup.enter="_onConfirm">
+<header>
+    <ui-input id="search" v-el:search class="big input" placeholder="Type file name here" v-value="searchText" v-on:change="search" v-on:confirm="_onConfirm"></ui-input>
+</header>
 
-<dom-module id="editor-quick-open">
-    <link rel="import" type="css" href="index.css">
-
-    <template>
-        <editor-input id="search" class="big input" placeholder="Type file name here" input-value="{{searchText}}" on-input-value-changed="search" on-confirm="_onConfirm"></editor-input>
-
-        <ul id="filesList" class="file-list">
-            <template is="dom-repeat" id="files" items="{{fileItems}}">
-                <quick-open-file-item
-                    item={{item}}
-                >
-                </quick-open-file-item>
-            </template>
-        </ul>
-    </template>
-
-    <script type="text/javascript" src="index.js"></script>
-</dom-module>
+<section>
+    <ol id="filesList" v-el:filesList class="file-list">
+        <li class="item" v-for="item in fileItems" :selected="item.selected">    {{item.path}}
+        </li>
+    </ol>
+</section>
+</div>
